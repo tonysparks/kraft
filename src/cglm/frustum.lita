@@ -1,0 +1,39 @@
+import "cglm/types"
+
+@foreign
+public func glm_frustum_planes(p0: mat4, p1: vec4 [6]) : void;
+
+@foreign
+public func glm_frustum_corners(p0: mat4, p1: vec4 [8]) : void;
+
+@foreign
+public func glm_frustum_center(p0: vec4 [8], p1: vec4) : void;
+
+@foreign
+public func glm_frustum_box(p0: vec4 [8], p1: mat4, p2: vec3 [2]) : void;
+
+@foreign
+public func glm_frustum_corners_at(p0: vec4 [8], p1: f32, p2: f32, p3: vec4 [4]) : void;
+// empty macro!!
+@foreign public const GLM_LBN: i32;
+@foreign public const GLM_LTN: i32;
+@foreign public const GLM_RTN: i32;
+@foreign public const GLM_RBN: i32;
+@foreign public const GLM_LBF: i32;
+@foreign public const GLM_LTF: i32;
+@foreign public const GLM_RTF: i32;
+@foreign public const GLM_RBF: i32;
+@foreign public const GLM_LEFT: i32;
+@foreign public const GLM_RIGHT: i32;
+@foreign public const GLM_BOTTOM: i32;
+@foreign public const GLM_TOP: i32;
+@foreign public const GLM_NEAR: i32;
+@foreign public const GLM_FAR: i32;
+@foreign public const GLM_CSCOORD_LBN: i32;
+@foreign public const GLM_CSCOORD_LTN: i32;
+@foreign public const GLM_CSCOORD_RTN: i32;
+@foreign public const GLM_CSCOORD_RBN: i32;
+@foreign public const GLM_CSCOORD_LBF: i32;
+@foreign public const GLM_CSCOORD_LTF: i32;
+@foreign public const GLM_CSCOORD_RTF: i32;
+@foreign public const GLM_CSCOORD_RBF: i32;

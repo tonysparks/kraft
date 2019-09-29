@@ -1,0 +1,190 @@
+import "cglm/types"
+
+@foreign
+public func glm_vec3(p0: vec4, p1: vec3) : void;
+
+@foreign
+public func glm_vec3_copy(p0: vec3, p1: vec3) : void;
+
+@foreign
+public func glm_vec3_zero(p0: vec3) : void;
+
+@foreign
+public func glm_vec3_one(p0: vec3) : void;
+
+@foreign
+public func glm_vec3_dot(p0: vec3, p1: vec3) : f32;
+
+@foreign
+public func glm_vec3_norm2(p0: vec3) : f32;
+
+@foreign
+public func glm_vec3_norm(p0: vec3) : f32;
+
+@foreign
+public func glm_vec3_norm_one(p0: vec3) : f32;
+
+@foreign
+public func glm_vec3_norm_inf(p0: vec3) : f32;
+
+@foreign
+public func glm_vec3_add(p0: vec3, p1: vec3, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_adds(p0: vec3, p1: f32, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_sub(p0: vec3, p1: vec3, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_subs(p0: vec3, p1: f32, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_mul(p0: vec3, p1: vec3, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_scale(p0: vec3, p1: f32, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_scale_as(p0: vec3, p1: f32, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_div(p0: vec3, p1: vec3, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_divs(p0: vec3, p1: f32, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_addadd(p0: vec3, p1: vec3, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_subadd(p0: vec3, p1: vec3, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_muladd(p0: vec3, p1: vec3, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_muladds(p0: vec3, p1: f32, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_maxadd(p0: vec3, p1: vec3, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_minadd(p0: vec3, p1: vec3, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_negate_to(p0: vec3, p1: vec3) : void;
+
+@foreign
+public func glm_vec3_negate(p0: vec3) : void;
+
+@foreign
+public func glm_vec3_normalize(p0: vec3) : void;
+
+@foreign
+public func glm_vec3_normalize_to(p0: vec3, p1: vec3) : void;
+
+@foreign
+public func glm_vec3_cross(p0: vec3, p1: vec3, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_crossn(p0: vec3, p1: vec3, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_angle(p0: vec3, p1: vec3) : f32;
+
+@foreign
+public func glm_vec3_rotate(p0: vec3, p1: f32, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_rotate_m4(p0: mat4, p1: vec3, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_rotate_m3(p0: mat3, p1: vec3, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_proj(p0: vec3, p1: vec3, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_center(p0: vec3, p1: vec3, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_distance2(p0: vec3, p1: vec3) : f32;
+
+@foreign
+public func glm_vec3_distance(p0: vec3, p1: vec3) : f32;
+
+@foreign
+public func glm_vec3_maxv(p0: vec3, p1: vec3, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_minv(p0: vec3, p1: vec3, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_ortho(p0: vec3, p1: vec3) : void;
+
+@foreign
+public func glm_vec3_clamp(p0: vec3, p1: f32, p2: f32) : void;
+
+@foreign
+public func glm_vec3_lerp(p0: vec3, p1: vec3, p2: f32, p3: vec3) : void;
+
+@foreign
+public func glm_vec3_lerpc(p0: vec3, p1: vec3, p2: f32, p3: vec3) : void;
+
+@foreign
+public func glm_vec3_mix(p0: vec3, p1: vec3, p2: f32, p3: vec3) : void;
+
+@foreign
+public func glm_vec3_mixc(p0: vec3, p1: vec3, p2: f32, p3: vec3) : void;
+
+@foreign
+public func glm_vec3_step_uni(p0: f32, p1: vec3, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_step(p0: vec3, p1: vec3, p2: vec3) : void;
+
+@foreign
+public func glm_vec3_smoothstep_uni(p0: f32, p1: f32, p2: vec3, p3: vec3) : void;
+
+@foreign
+public func glm_vec3_smoothstep(p0: vec3, p1: vec3, p2: vec3, p3: vec3) : void;
+
+@foreign
+public func glm_vec3_smoothinterp(p0: vec3, p1: vec3, p2: f32, p3: vec3) : void;
+
+@foreign
+public func glm_vec3_smoothinterpc(p0: vec3, p1: vec3, p2: f32, p3: vec3) : void;
+
+@foreign
+public func glm_cross(p0: vec3, p1: vec3, p2: vec3) : void;
+
+@foreign
+public func glm_dot(p0: vec3, p1: vec3) : f32;
+
+@foreign
+public func glm_normalize(p0: vec3) : void;
+
+@foreign
+public func glm_normalize_to(p0: vec3, p1: vec3) : void;
+
+@foreign
+public func glm_vec3_swizzle(p0: vec3, p1: i32, p2: vec3) : void;
+// empty macro!!
+@foreign public const glm_vec3_dup: i32;
+@foreign public const glm_vec3_flipsign: i32;
+@foreign public const glm_vec3_flipsign_to: i32;
+@foreign public const glm_vec3_inv: i32;
+@foreign public const glm_vec3_inv_to: i32;
+@foreign public const glm_vec3_mulv: i32;
+@foreign public const GLM_VEC3_ONE_INIT: i32;
+@foreign public const GLM_VEC3_ZERO_INIT: i32;
+@foreign public const GLM_VEC3_ONE: i32;
+@foreign public const GLM_VEC3_ZERO: i32;
+@foreign public const GLM_YUP: i32;
+@foreign public const GLM_ZUP: i32;
+@foreign public const GLM_XUP: i32;
+@foreign public const GLM_XXX: i32;
+@foreign public const GLM_YYY: i32;
+@foreign public const GLM_ZZZ: i32;
+@foreign public const GLM_ZYX: i32;

@@ -1,0 +1,51 @@
+@foreign public typedef [2]f32 as vec2;
+@foreign public typedef [3]f32 as vec3;
+@foreign public typedef [3]i32 as ivec3;
+@foreign public typedef [4]f32 as vec4;
+@foreign public typedef void as versor;
+@foreign public typedef [3][3]f32 as mat3;
+@foreign public typedef [4][4]f32 as mat4;
+
+/*
+typedef float                   vec2[2];
+typedef float                   vec3[3];
+typedef int                    ivec3[3];
+typedef CGLM_ALIGN_IF(16) float vec4[4];
+typedef vec4                    versor;
+typedef vec3                    mat3[3];
+typedef CGLM_ALIGN_MAT vec4     mat4[4];
+*/
+
+// empty macro!!
+@foreign public const CGLM_ALIGN: i32;
+@foreign public const CGLM_ALIGN_IF: i32;
+@foreign public const CGLM_ALIGN_MAT: i32;
+@foreign public const GLM_E: i32;
+@foreign public const GLM_LOG2E: i32;
+@foreign public const GLM_LOG10E: i32;
+@foreign public const GLM_LN2: i32;
+@foreign public const GLM_LN10: i32;
+@foreign public const GLM_PI: i32;
+@foreign public const GLM_PI_2: i32;
+@foreign public const GLM_PI_4: i32;
+@foreign public const GLM_1_PI: i32;
+@foreign public const GLM_2_PI: i32;
+@foreign public const GLM_2_SQRTPI: i32;
+@foreign public const GLM_SQRT2: i32;
+@foreign public const GLM_SQRT1_2: i32;
+@foreign public const GLM_Ef: i32;
+@foreign public const GLM_LOG2Ef: i32;
+@foreign public const GLM_LOG10Ef: i32;
+@foreign public const GLM_LN2f: i32;
+@foreign public const GLM_LN10f: i32;
+@foreign public const GLM_PIf: i32;
+@foreign public const GLM_PI_2f: i32;
+@foreign public const GLM_PI_4f: i32;
+@foreign public const GLM_1_PIf: i32;
+@foreign public const GLM_2_PIf: i32;
+@foreign public const GLM_2_SQRTPIf: i32;
+@foreign public const GLM_SQRT2f: i32;
+@foreign public const GLM_SQRT1_2f: i32;
+@foreign public const CGLM_PI: i32;
+@foreign public const CGLM_PI_2: i32;
+@foreign public const CGLM_PI_4: i32;

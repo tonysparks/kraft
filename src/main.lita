@@ -1,0 +1,308 @@
+import "io"
+import "common"
+import "input_system"
+import "game"
+
+
+import "opengl"
+import "glfw"
+import "model"
+import "renderer"
+import "texture"
+import "shader"
+import "camera"
+import "math"
+
+import "libc" as c
+
+import "cglm/cglm"
+
+
+@cFile("glad.h");
+@raw("""
+#include <GLFW/glfw3.h>
+#include <cglm/cglm.h>
+""");
+
+import "stb_image" as stb;
+
+const WIDTH = 1280
+const HEIGHT = 720
+
+const FOV = 90f
+const NEAR_PLANE = 0.01f
+const FAR_PLANE  = 10_000f
+
+var isRunning = false;
+
+var model : Model;
+
+/*
+    3 floats Position
+    4 floats Color
+    2 floats TexCoord
+*/    
+const data = []f32 { 
+
+    //Position ---------|Color-----------|Tex
+    
+    -0.5f, +0.5f, 0.0f,  1f, 1f, 1f, 1f,  0f, 0f,  
+    +0.5f, +0.5f, 0.0f,  1f, 1f, 1f, 1f,  1f, 0f,  
+	+0.5f, -0.5f, 0.0f,  1f, 1f, 1f, 1f,  1f, 1f,  
+	-0.5f, -0.5f, 0.0f,  1f, 1f, 1f, 1f,  0f, 1f,  
+
+/*
+    -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Top-left
+     0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Top-right
+     0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // Bottom-right
+    -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f  // Bottom-left
+*/    
+}
+
+const indices = []u32 {
+    0, 1, 2,
+    2, 3, 0
+}
+
+var texture: Texture;
+var shader: ShaderProgram;
+
+var camera = Camera{
+    .pos = vec3{0,0,0},
+    .fov = FOV,
+    .pitch = 0,
+    .yaw = 0,
+    .roll = 0
+}
+var projectionMatrix: mat4;
+var transformMatrix: mat4;
+var viewMatrix: mat4;
+var window: GLFWwindow*;
+
+var box = Entity {
+    .pos = vec3{0, 0, -5},
+    .rot = vec3{0, -30, 0},
+    .scale = 1f
+}
+
+struct Entity {
+    pos: vec3
+    rot: vec3
+    scale: f32
+}
+
+func CmdQuit(args: char const*) {
+    isRunning = false;
+}
+
+func Init() {
+
+    var fragSource: char*;
+    var status = readFile("../assets/shaders/basicFragment.glsl", &fragSource)
+
+    var vertSource: char*;
+    readFile("../assets/shaders/basicVertex.glsl", &vertSource)
+
+    shader = LoadProgram(vertSource, fragSource)        
+    glCheckErrorPrint()
+    shader.bindAttr(AttribPos.POSITION, "position")
+    shader.bindAttr(AttribPos.COLOR, "color")
+    shader.bindAttr(AttribPos.TEXCOORD, "texCoord")
+    shader.link()
+    shader.validate()
+
+    glCheckErrorPrint()
+
+    texture = LoadTextureFromFile("../assets/coin.png")
+    printf("Width: %f Height: %f\n", texture.width, texture.height)
+    model = LoadModel(indices, 6, data, 36, texture)
+    //model = LoadModel(indices, 6, data, 28, texture)
+
+    var aspectRatio = (GetWindowWidth() as (f32) / GetWindowHeight() as (f32)) as (f32);
+	var yScale = ((1f / c::tan(toRadians(FOV /2f))) * aspectRatio) as (f32);
+	var xScale = yScale / aspectRatio;
+    var frustumLength = FAR_PLANE - NEAR_PLANE;
+
+    glm_mat4_identity(projectionMatrix)
+    projectionMatrix[0][0] = xScale;
+    projectionMatrix[1][1] = yScale;
+    projectionMatrix[2][2] = -((FAR_PLANE + NEAR_PLANE) / frustumLength);
+    projectionMatrix[2][3] = -1;
+    projectionMatrix[3][2] = -((2 * NEAR_PLANE * FAR_PLANE) / frustumLength);
+    projectionMatrix[3][3] = 0;
+
+    printf("Aspect: %f\n", aspectRatio)
+    PrintMatrix(projectionMatrix)
+
+    glm_mat4_identity(transformMatrix)
+    glm_mat4_identity(viewMatrix)  
+
+    shader.bind()
+    shader.loadMat4ByName("transformationMatrix", transformMatrix)
+    shader.loadMat4ByName("projectionMatrix", projectionMatrix)
+    shader.loadMat4ByName("viewMatrix", viewMatrix)
+    shader.unbind()
+}
+
+func Update(timeStep: TimeStep*) {    
+    InputSysUpdate(timeStep);
+//    ConsoleUpdate(timeStep);
+
+    GameUpdate(timeStep)
+
+    var v = vec2 {0,0};
+    if(InputSysIsKeyPressed(GLFW_KEY_W)) {
+        v[1] = -1f;
+    }
+    else if(InputSysIsKeyPressed(GLFW_KEY_S)) {
+        v[1] = 1f;
+    }
+
+    if(InputSysIsKeyPressed(GLFW_KEY_A)) {
+        v[0] = -1f;
+    }
+    else if(InputSysIsKeyPressed(GLFW_KEY_D)) {
+        v[0] = 1f;
+    }
+
+    camera.move(v)
+}
+
+func Draw() {
+    glViewport(0, 0, WIDTH, HEIGHT)
+    Prepare()
+
+    shader.bind()
+    
+    glm_mat4_identity(transformMatrix)    
+    TransformMatrix(transformMatrix, box.pos, box.rot, box.scale)
+
+    //printf("%p\n", mt)
+    //PrintMatrix(mt)
+
+    shader.loadMat4ByName("transformationMatrix", transformMatrix)
+
+    glm_mat4_identity(viewMatrix)    
+    camera.viewMatrix(viewMatrix)
+
+    //PrintMatrix(mv)
+
+    shader.loadMat4ByName("viewMatrix", viewMatrix)
+    model.render()
+    shader.unbind()
+//    GameDraw();
+//   ConsoleDraw();
+}
+
+func GetWindowWidth() : i32 {
+    if(!window) {
+        return 0;
+    }
+
+    var width: i32;
+    var height: i32;
+    glfwGetWindowSize(window, &width, &height);
+    return width;
+}
+
+func GetWindowHeight() : i32 {
+    if(!window) {
+        return 0;
+    }
+    var width: i32;
+    var height: i32;
+    glfwGetWindowSize(window, &width, &height);
+    return height;
+}
+
+func main(len: i32, args: char**) : i32 {
+    glfwSetErrorCallback(errorCallback);
+    
+    if (!glfwInit()) {
+        log(LogLevel.FATAL, "Failed to initialize glfw!\n")
+    }    
+    defer glfwTerminate();
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+
+    window = glfwCreateWindow(WIDTH, HEIGHT, "Kraft!", null, null);
+    if (!window) {
+        log(LogLevel.FATAL, "Failed to initialize window context!\n")
+    }
+    defer glfwDestroyWindow(window);
+
+    glfwSetKeyCallback(window, keyCallback);
+    glfwMakeContextCurrent(window);
+    gladLoadGLLoader(glfwGetProcAddress as (GLADloadproc));
+    glfwSwapInterval(1);
+
+    Init()
+
+    var gameClock : Time = 0_i64;
+    var currentTime = GetTicks()
+    var accumulator = 0_i64
+    var previousTime : Time = 0_i64
+
+    const maxIterations = 5
+    const maxDelta = 250_i64
+    const frameRate = 30_i64
+    const dt = 1000_i64 / frameRate
+
+    const timeStep = TimeStep {
+        .frameTime: dt,
+        .gameClock: gameClock,
+        .frameTimeFraction: dt as (f64) / 1000_f64
+    }
+
+    isRunning = true;
+
+    while (!glfwWindowShouldClose(window) && isRunning) {
+        var newTime = GetTicks()
+        var deltaTime = newTime - currentTime;
+
+        // don't let the game get too far behind
+        if(deltaTime > maxDelta) {
+            deltaTime = maxDelta;
+        }
+
+        // Keep the game logic running at a fix time step
+        if(deltaTime >= dt) {
+            currentTime = newTime
+            accumulator += deltaTime
+            var iteration = 0
+
+            while(accumulator >= dt && iteration < maxIterations) {
+                timeStep.gameClock = gameClock
+
+                glfwPollEvents();
+                Update(&timeStep)
+
+                gameClock   += dt
+                accumulator -= dt
+                iteration   += 1
+            }
+        }       
+
+        Draw()
+        glfwSwapBuffers(window);
+    }
+
+
+}
+
+public func GetKeyState(key: i32) : i32 {
+    return glfwGetKey(window, key)
+}
+
+func keyCallback(window: GLFWwindow*, key: i32, scancode: i32, action: i32, mods: i32) {
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
+}
+
+func errorCallback(error: i32, description: char const*) {
+    log(LogLevel.ERROR, "%s", description)
+}
+

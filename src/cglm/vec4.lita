@@ -1,0 +1,161 @@
+import "cglm/types"
+
+@foreign
+public func glm_vec4(p0: vec3, p1: f32, p2: vec4) : void;
+
+@foreign
+public func glm_vec4_copy3(p0: vec4, p1: vec3) : void;
+
+@foreign
+public func glm_vec4_copy(p0: vec4, p1: vec4) : void;
+
+@foreign
+public func glm_vec4_ucopy(p0: vec4, p1: vec4) : void;
+
+@foreign
+public func glm_vec4_zero(p0: vec4) : void;
+
+@foreign
+public func glm_vec4_one(p0: vec4) : void;
+
+@foreign
+public func glm_vec4_dot(p0: vec4, p1: vec4) : f32;
+
+@foreign
+public func glm_vec4_norm2(p0: vec4) : f32;
+
+@foreign
+public func glm_vec4_norm(p0: vec4) : f32;
+
+@foreign
+public func glm_vec4_norm_one(p0: vec4) : f32;
+
+@foreign
+public func glm_vec4_norm_inf(p0: vec4) : f32;
+
+@foreign
+public func glm_vec4_add(p0: vec4, p1: vec4, p2: vec4) : void;
+
+@foreign
+public func glm_vec4_adds(p0: vec4, p1: f32, p2: vec4) : void;
+
+@foreign
+public func glm_vec4_sub(p0: vec4, p1: vec4, p2: vec4) : void;
+
+@foreign
+public func glm_vec4_subs(p0: vec4, p1: f32, p2: vec4) : void;
+
+@foreign
+public func glm_vec4_mul(p0: vec4, p1: vec4, p2: vec4) : void;
+
+@foreign
+public func glm_vec4_scale(p0: vec4, p1: f32, p2: vec4) : void;
+
+@foreign
+public func glm_vec4_scale_as(p0: vec4, p1: f32, p2: vec4) : void;
+
+@foreign
+public func glm_vec4_div(p0: vec4, p1: vec4, p2: vec4) : void;
+
+@foreign
+public func glm_vec4_divs(p0: vec4, p1: f32, p2: vec4) : void;
+
+@foreign
+public func glm_vec4_addadd(p0: vec4, p1: vec4, p2: vec4) : void;
+
+@foreign
+public func glm_vec4_subadd(p0: vec4, p1: vec4, p2: vec4) : void;
+
+@foreign
+public func glm_vec4_muladd(p0: vec4, p1: vec4, p2: vec4) : void;
+
+@foreign
+public func glm_vec4_muladds(p0: vec4, p1: f32, p2: vec4) : void;
+
+@foreign
+public func glm_vec4_maxadd(p0: vec4, p1: vec4, p2: vec4) : void;
+
+@foreign
+public func glm_vec4_minadd(p0: vec4, p1: vec4, p2: vec4) : void;
+
+@foreign
+public func glm_vec4_negate_to(p0: vec4, p1: vec4) : void;
+
+@foreign
+public func glm_vec4_negate(p0: vec4) : void;
+
+@foreign
+public func glm_vec4_normalize_to(p0: vec4, p1: vec4) : void;
+
+@foreign
+public func glm_vec4_normalize(p0: vec4) : void;
+
+@foreign
+public func glm_vec4_distance(p0: vec4, p1: vec4) : f32;
+
+@foreign
+public func glm_vec4_distance2(p0: vec4, p1: vec4) : f32;
+
+@foreign
+public func glm_vec4_maxv(p0: vec4, p1: vec4, p2: vec4) : void;
+
+@foreign
+public func glm_vec4_minv(p0: vec4, p1: vec4, p2: vec4) : void;
+
+@foreign
+public func glm_vec4_clamp(p0: vec4, p1: f32, p2: f32) : void;
+
+@foreign
+public func glm_vec4_lerp(p0: vec4, p1: vec4, p2: f32, p3: vec4) : void;
+
+@foreign
+public func glm_vec4_lerpc(p0: vec4, p1: vec4, p2: f32, p3: vec4) : void;
+
+@foreign
+public func glm_vec4_mix(p0: vec4, p1: vec4, p2: f32, p3: vec4) : void;
+
+@foreign
+public func glm_vec4_mixc(p0: vec4, p1: vec4, p2: f32, p3: vec4) : void;
+
+@foreign
+public func glm_vec4_step_uni(p0: f32, p1: vec4, p2: vec4) : void;
+
+@foreign
+public func glm_vec4_step(p0: vec4, p1: vec4, p2: vec4) : void;
+
+@foreign
+public func glm_vec4_smoothstep_uni(p0: f32, p1: f32, p2: vec4, p3: vec4) : void;
+
+@foreign
+public func glm_vec4_smoothstep(p0: vec4, p1: vec4, p2: vec4, p3: vec4) : void;
+
+@foreign
+public func glm_vec4_smoothinterp(p0: vec4, p1: vec4, p2: f32, p3: vec4) : void;
+
+@foreign
+public func glm_vec4_smoothinterpc(p0: vec4, p1: vec4, p2: f32, p3: vec4) : void;
+
+@foreign
+public func glm_vec4_cubic(p0: f32, p1: vec4) : void;
+
+@foreign
+public func glm_vec4_swizzle(p0: vec4, p1: i32, p2: vec4) : void;
+// empty macro!!
+@foreign public const glm_vec4_dup3: i32;
+@foreign public const glm_vec4_dup: i32;
+@foreign public const glm_vec4_flipsign: i32;
+@foreign public const glm_vec4_flipsign_to: i32;
+@foreign public const glm_vec4_inv: i32;
+@foreign public const glm_vec4_inv_to: i32;
+@foreign public const glm_vec4_mulv: i32;
+@foreign public const GLM_VEC4_ONE_INIT: i32;
+@foreign public const GLM_VEC4_BLACK_INIT: i32;
+@foreign public const GLM_VEC4_ZERO_INIT: i32;
+@foreign public const GLM_VEC4_ONE: i32;
+@foreign public const GLM_VEC4_BLACK: i32;
+@foreign public const GLM_VEC4_ZERO: i32;
+@foreign public const GLM_XXXX: i32;
+@foreign public const GLM_YYYY: i32;
+@foreign public const GLM_ZZZZ: i32;
+@foreign public const GLM_WWWW: i32;
+@foreign public const GLM_WZYX: i32;

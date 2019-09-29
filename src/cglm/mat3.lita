@@ -1,0 +1,55 @@
+import "cglm/types"
+
+@foreign
+public func glm_mat3_copy(p0: mat3, p1: mat3) : void;
+
+@foreign
+public func glm_mat3_identity(p0: mat3) : void;
+
+@foreign
+public func glm_mat3_identity_array(p0: mat3*, p1: size_t) : void;
+
+@foreign
+public func glm_mat3_zero(p0: mat3) : void;
+
+@foreign
+public func glm_mat3_mul(p0: mat3, p1: mat3, p2: mat3) : void;
+
+@foreign
+public func glm_mat3_transpose_to(p0: mat3, p1: mat3) : void;
+
+@foreign
+public func glm_mat3_transpose(p0: mat3) : void;
+
+@foreign
+public func glm_mat3_mulv(p0: mat3, p1: vec3, p2: vec3) : void;
+
+@foreign
+public func glm_mat3_trace(p0: mat3) : f32;
+
+@foreign
+public func glm_mat3_quat(p0: mat3, p1: versor) : void;
+
+@foreign
+public func glm_mat3_scale(p0: mat3, p1: f32) : void;
+
+@foreign
+public func glm_mat3_det(p0: mat3) : f32;
+
+@foreign
+public func glm_mat3_inv(p0: mat3, p1: mat3) : void;
+
+@foreign
+public func glm_mat3_swap_col(p0: mat3, p1: i32, p2: i32) : void;
+
+@foreign
+public func glm_mat3_swap_row(p0: mat3, p1: i32, p2: i32) : void;
+
+@foreign
+public func glm_mat3_rmc(p0: vec3, p1: mat3, p2: vec3) : f32;
+// empty macro!!
+@foreign public const GLM_MAT3_IDENTITY_INIT: i32;
+@foreign public const GLM_MAT3_ZERO_INIT: i32;
+@foreign public const GLM_MAT3_IDENTITY: i32;
+@foreign public const GLM_MAT3_ZERO: i32;
+@foreign public const glm_mat3_dup: i32;

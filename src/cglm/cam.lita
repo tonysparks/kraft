@@ -1,0 +1,74 @@
+import "cglm/types"
+
+@foreign
+public func glm_frustum(p0: f32, p1: f32, p2: f32, p3: f32, p4: f32, p5: f32, p6: mat4) : void;
+
+@foreign
+public func glm_ortho(p0: f32, p1: f32, p2: f32, p3: f32, p4: f32, p5: f32, p6: mat4) : void;
+
+@foreign
+public func glm_ortho_aabb(p0: vec3 [2], p1: mat4) : void;
+
+@foreign
+public func glm_ortho_aabb_p(p0: vec3 [2], p1: f32, p2: mat4) : void;
+
+@foreign
+public func glm_ortho_aabb_pz(p0: vec3 [2], p1: f32, p2: mat4) : void;
+
+@foreign
+public func glm_ortho_default(p0: f32, p1: mat4) : void;
+
+@foreign
+public func glm_ortho_default_s(p0: f32, p1: f32, p2: mat4) : void;
+
+@foreign
+public func glm_perspective(p0: f32, p1: f32, p2: f32, p3: f32, p4: mat4) : void;
+
+@foreign
+public func glm_persp_move_far(p0: mat4, p1: f32) : void;
+
+@foreign
+public func glm_perspective_default(p0: f32, p1: mat4) : void;
+
+@foreign
+public func glm_perspective_resize(p0: f32, p1: mat4) : void;
+
+@foreign
+public func glm_lookat(p0: vec3, p1: vec3, p2: vec3, p3: mat4) : void;
+
+@foreign
+public func glm_look(p0: vec3, p1: vec3, p2: vec3, p3: mat4) : void;
+
+@foreign
+public func glm_look_anyup(p0: vec3, p1: vec3, p2: mat4) : void;
+
+@foreign
+public func glm_persp_decomp(p0: mat4, p1: f32*, p2: f32*, p3: f32*, p4: f32*, p5: f32*, p6: f32*) : void;
+
+@foreign
+public func glm_persp_decompv(p0: mat4, p1: f32 [6]) : void;
+
+@foreign
+public func glm_persp_decomp_x(p0: mat4, p1: f32*, p2: f32*) : void;
+
+@foreign
+public func glm_persp_decomp_y(p0: mat4, p1: f32*, p2: f32*) : void;
+
+@foreign
+public func glm_persp_decomp_z(p0: mat4, p1: f32*, p2: f32*) : void;
+
+@foreign
+public func glm_persp_decomp_far(p0: mat4, p1: f32*) : void;
+
+@foreign
+public func glm_persp_decomp_near(p0: mat4, p1: f32*) : void;
+
+@foreign
+public func glm_persp_fovy(p0: mat4) : f32;
+
+@foreign
+public func glm_persp_aspect(p0: mat4) : f32;
+
+@foreign
+public func glm_persp_sizes(p0: mat4, p1: f32, p2: vec4) : void;
+// empty macro!!

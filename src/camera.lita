@@ -1,0 +1,30 @@
+import "cglm/cglm"
+import "common"
+
+
+public struct Camera {
+    pos: vec3
+    fov: f32
+    pitch: f32
+    yaw: f32
+    roll: f32
+}
+
+public func (c: Camera*) move(m: vec2) {
+    c.pos[2] += (m[1] * 0.02f)
+    c.pos[0] += (m[0] * 0.02f)
+}
+
+public func (c: Camera*) viewMatrix(m: mat4) {
+    glm_mat4_identity(m)
+    glm_rotate(m, toRadians(c.pitch), vec3{1,0,0})
+    glm_rotate(m, toRadians(c.yaw),   vec3{0,1,0})
+    glm_rotate(m, toRadians(c.roll),  vec3{0,0,1})
+
+    var n = vec3 {
+        -c.pos[0],
+        -c.pos[1],
+        -c.pos[2]
+    }
+    glm_translate(m, n)
+}

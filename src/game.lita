@@ -1,0 +1,36 @@
+import "io"
+import "common"
+import "input_system"
+
+public struct Game {    
+}
+
+const game = Game{}
+
+func GameOnMouseEvent(event: MouseEvent*) : bool {    
+    return false
+}
+
+func GameOnKeyEvent(event: KeyEvent*) : bool {    
+    return false
+}
+
+public func GameInit() {
+    
+    InputSysRegisterMouseHandler(&GameOnMouseEvent)
+    InputSysRegisterKeyboardHandler(&GameOnKeyEvent)
+
+}
+
+public func GameDestroy() {
+}
+
+
+
+public func GameUpdate(timeStep: TimeStep*) {
+    
+}
+
+public func GameDraw() {
+        
+}

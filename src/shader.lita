@@ -1,0 +1,153 @@
+import "opengl"
+import "common"
+import "cglm/cglm"
+
+public struct ShaderProgram {
+    id: GLuint
+    vert: Shader
+    frag: Shader
+}
+
+public struct Shader {
+    id: GLuint
+}
+
+const MAX_LOG_LENGTH = 512
+
+public func LoadShader(source: char const*, type: i32) : Shader {
+    var shader = glCreateShader(type)
+    glShaderSource(shader, 1, (&source) as (GLchar const**), null)
+    glCompileShader(shader)
+    
+    var isCompiled: i32;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled)
+
+    if(!isCompiled) {
+        var buf: [MAX_LOG_LENGTH]char;
+        var maxLength = 0
+        glGetShaderInfoLog(shader, MAX_LOG_LENGTH, &maxLength, buf)
+
+        log(LogLevel.FATAL, "Error compiling shader - %s\n", buf)
+    }
+
+    return Shader{.id = shader}
+}
+
+public func LoadProgram(vertexSource: char const*, 
+                        fragSource: char const*) : ShaderProgram {
+
+    var vertex = LoadShader(vertexSource, GL_VERTEX_SHADER)
+    var frag   = LoadShader(fragSource, GL_FRAGMENT_SHADER)
+
+    var prog = glCreateProgram()
+    glAttachShader(prog, vertex.id)
+    glAttachShader(prog, frag.id)
+
+    return ShaderProgram{
+        .id = prog,
+        .vert = vertex,
+        .frag = frag
+    }
+}
+
+public func (s: ShaderProgram*) link() {
+    glLinkProgram(s.id)
+
+    var isValid: i32;
+    glGetProgramiv(s.id, GL_LINK_STATUS, &isValid)    
+    if(!isValid) {
+        var buf: [MAX_LOG_LENGTH]char;
+        var maxLength = 0
+        glGetProgramInfoLog(s.id, MAX_LOG_LENGTH, &maxLength, buf)
+
+        log(LogLevel.ERROR, "Error linking shader program - %s\n", buf)
+    }
+}
+
+public func (s: ShaderProgram*) validate() : bool {    
+    glValidateProgram(s.id)
+
+    var isValid: i32;
+    glGetProgramiv(s.id, GL_VALIDATE_STATUS, &isValid)    
+    if(!isValid) {
+        var buf: [MAX_LOG_LENGTH]char;
+        var maxLength = 0
+        glGetProgramInfoLog(s.id, MAX_LOG_LENGTH, &maxLength, buf)
+
+        log(LogLevel.ERROR, "Error validating shader program - %s\n", buf)
+    }
+
+    return isValid > 0
+}
+
+public func (s: ShaderProgram*) bindFragData(location: u32, name: char const*) {
+    glBindFragDataLocation(s.id, location, name as (GLchar const*))
+}
+
+public func (s: ShaderProgram*) bindAttr(attrId: u32, name: char const*) {
+    glBindAttribLocation(s.id, attrId, name)    
+}
+
+public func (s: ShaderProgram*) loadFloat(location: u32, v: f32) {
+    glUniform1f(location, v)
+}
+
+public func (s: ShaderProgram*) loadVec2(location: u32, v: vec2) {
+    glUniform2f(location, v[0], v[1])
+}
+
+public func (s: ShaderProgram*) loadVec3(location: u32, v: vec3) {
+    glUniform3f(location, v[0], v[1], v[2])
+}
+
+public func (s: ShaderProgram*) loadVec4(location: u32, v: vec4) {
+    glUniform4f(location, v[0], v[1], v[2], v[3])
+}
+
+public func (s: ShaderProgram*) loadMat4(location: u32, v: mat4) {
+    glUniformMatrix4fv(location, 1, GL_FALSE, v[0])
+}
+
+// via name
+
+public func (s: ShaderProgram*) loadFloatByName(name: char const*, v: f32) {
+    var location = glGetUniformLocation(s.id, name)
+    glUniform1f(location, v)
+}
+
+public func (s: ShaderProgram*) loadVec2ByName(name: char const*, v: vec2) {
+    var location = glGetUniformLocation(s.id, name)
+    glUniform2f(location, v[0], v[1])
+}
+
+public func (s: ShaderProgram*) loadVec3ByName(name: char const*, v: vec3) {
+    var location = glGetUniformLocation(s.id, name)
+    glUniform3f(location, v[0], v[1], v[2])
+}
+
+public func (s: ShaderProgram*) loadVec4ByName(name: char const*, v: vec4) {
+    var location = glGetUniformLocation(s.id, name)
+    glUniform4f(location, v[0], v[1], v[2], v[3])
+}
+
+public func (s: ShaderProgram*) loadMat4ByName(name: char const*, v: mat4) {
+    var location = glGetUniformLocation(s.id, name)
+    glUniformMatrix4fv(location, 1, GL_FALSE, v[0])
+}
+
+public func (s: ShaderProgram*) getUniformLocation(name: char const*) : GLint {
+    return glGetUniformLocation(s.id, name)
+}
+
+public func (s: ShaderProgram*) bind() {
+    glUseProgram(s.id)
+}
+
+public func (s: ShaderProgram*) unbind() {
+    glUseProgram(0)
+}
+
+
+public func (s: ShaderProgram*) destroy() {
+    // TODO
+}

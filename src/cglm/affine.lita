@@ -1,0 +1,68 @@
+import "cglm/types"
+
+//@foreign
+//public func glm_mat4_mul(p0: mat4, p1: mat4, p2: mat4) : void;
+
+@foreign
+public func glm_translate(p0: mat4, p1: vec3) : void;
+
+@foreign
+public func glm_translate_to(p0: mat4, p1: vec3, p2: mat4) : void;
+
+@foreign
+public func glm_translate_x(p0: mat4, p1: f32) : void;
+
+@foreign
+public func glm_translate_y(p0: mat4, p1: f32) : void;
+
+@foreign
+public func glm_translate_z(p0: mat4, p1: f32) : void;
+
+@foreign
+public func glm_translate_make(p0: mat4, p1: vec3) : void;
+
+@foreign
+public func glm_scale_to(p0: mat4, p1: vec3, p2: mat4) : void;
+
+@foreign
+public func glm_scale_make(p0: mat4, p1: vec3) : void;
+
+@foreign
+public func glm_scale(p0: mat4, p1: vec3) : void;
+
+@foreign
+public func glm_scale_uni(p0: mat4, p1: f32) : void;
+
+@foreign
+public func glm_rotate_x(p0: mat4, p1: f32, p2: mat4) : void;
+
+@foreign
+public func glm_rotate_y(p0: mat4, p1: f32, p2: mat4) : void;
+
+@foreign
+public func glm_rotate_z(p0: mat4, p1: f32, p2: mat4) : void;
+
+@foreign
+public func glm_rotate_make(p0: mat4, p1: f32, p2: vec3) : void;
+
+@foreign
+public func glm_rotate(p0: mat4, p1: f32, p2: vec3) : void;
+
+@foreign
+public func glm_rotate_at(p0: mat4, p1: vec3, p2: f32, p3: vec3) : void;
+
+@foreign
+public func glm_rotate_atm(p0: mat4, p1: vec3, p2: f32, p3: vec3) : void;
+
+@foreign
+public func glm_decompose_scalev(p0: mat4, p1: vec3) : void;
+
+@foreign
+public func glm_uniscaled(p0: mat4) : bool;
+
+@foreign
+public func glm_decompose_rs(p0: mat4, p1: mat4, p2: vec3) : void;
+
+@foreign
+public func glm_decompose(p0: mat4, p1: vec4, p2: mat4, p3: vec3) : void;
+// empty macro!!

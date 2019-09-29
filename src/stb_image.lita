@@ -1,0 +1,38 @@
+@raw("""
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+""");
+
+@foreign
+public enum StbFormat {
+   STBI_default = 0, // only used for desired_channels
+
+   STBI_grey       = 1,
+   STBI_grey_alpha = 2,
+   STBI_rgb        = 3,
+   STBI_rgb_alpha  = 4
+}
+
+@foreign
+public struct FILE;
+
+@foreign
+public typedef u8 stbi_uc;
+
+@foreign
+public typedef u16 stbi_us;
+
+@foreign
+public func stbi_load_from_memory(buffer: stbi_uc const*, len: i32, x: i32*, y: i32*, channels_in_file: i32, desired_channels: i32) : stbi_uc*;
+
+@foreign
+public func stbi_load(filename: char const*, x: i32*, y: i32*, channels_in_file: i32, desired_channels: i32) : stbi_uc*;
+
+@foreign
+public func stbi_load_from_file(file: FILE*, x: i32*, y: i32*, channels_in_file: i32, desired_channels: i32) : stbi_uc*;
+
+@foreign
+public func stbi_image_free(retval_from_stbi_load: void*) : void;
+
+@foreign
+public func stbi_set_flip_vertically_on_load(flag_true_if_should_flip: i32) : void;

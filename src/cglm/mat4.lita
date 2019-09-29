@@ -1,0 +1,84 @@
+import "cglm/types"
+
+@foreign
+public func glm_mat4_ucopy(p0: mat4, p1: mat4) : void;
+
+@foreign
+public func glm_mat4_copy(p0: mat4, p1: mat4) : void;
+
+@foreign
+public func glm_mat4_identity(p0: mat4) : void;
+
+@foreign
+public func glm_mat4_identity_array(p0: mat4*, p1: u64) : void;
+
+@foreign
+public func glm_mat4_zero(p0: mat4) : void;
+
+@foreign
+public func glm_mat4_pick3(p0: mat4, p1: mat3) : void;
+
+@foreign
+public func glm_mat4_pick3t(p0: mat4, p1: mat3) : void;
+
+@foreign
+public func glm_mat4_ins3(p0: mat3, p1: mat4) : void;
+
+@foreign
+public func glm_mat4_mul(p0: mat4, p1: mat4, p2: mat4) : void;
+
+@foreign
+public func glm_mat4_mulN(p0: mat4 *[], p1: u32, p2: mat4) : void;
+
+@foreign
+public func glm_mat4_mulv(p0: mat4, p1: vec4, p2: vec4) : void;
+
+@foreign
+public func glm_mat4_trace(p0: mat4) : f32;
+
+@foreign
+public func glm_mat4_trace3(p0: mat4) : f32;
+
+@foreign
+public func glm_mat4_quat(p0: mat4, p1: versor) : void;
+
+@foreign
+public func glm_mat4_mulv3(p0: mat4, p1: vec3, p2: f32, p3: vec3) : void;
+
+@foreign
+public func glm_mat4_transpose_to(p0: mat4, p1: mat4) : void;
+
+@foreign
+public func glm_mat4_transpose(p0: mat4) : void;
+
+@foreign
+public func glm_mat4_scale_p(p0: mat4, p1: f32) : void;
+
+@foreign
+public func glm_mat4_scale(p0: mat4, p1: f32) : void;
+
+@foreign
+public func glm_mat4_det(p0: mat4) : f32;
+
+@foreign
+public func glm_mat4_inv(p0: mat4, p1: mat4) : void;
+
+@foreign
+public func glm_mat4_inv_fast(p0: mat4, p1: mat4) : void;
+
+@foreign
+public func glm_mat4_swap_col(p0: mat4, p1: i32, p2: i32) : void;
+
+@foreign
+public func glm_mat4_swap_row(p0: mat4, p1: i32, p2: i32) : void;
+
+@foreign
+public func glm_mat4_rmc(p0: vec4, p1: mat4, p2: vec4) : f32;
+// empty macro!!
+@foreign public const GLM_MAT4_IDENTITY_INIT: i32;
+@foreign public const GLM_MAT4_ZERO_INIT: i32;
+@foreign public const GLM_MAT4_IDENTITY: i32;
+@foreign public const GLM_MAT4_ZERO: i32;
+@foreign public const glm_mat4_udup: i32;
+@foreign public const glm_mat4_dup: i32;
+@foreign public const glm_mat4_inv_precise: i32;

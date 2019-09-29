@@ -1,0 +1,60 @@
+import "stb_image"
+import "opengl"
+import "common"
+
+public struct Texture {
+    texId : GLuint
+    width: f32
+    height: f32
+}
+
+public func LoadTextureFromFile(filename: char const*) : Texture {
+    var width: i32;
+    var height: i32;
+    var channels: i32;
+
+    stbi_set_flip_vertically_on_load(true)
+    var pixels = stbi_load(filename,
+                           &width,
+                           &height,
+                           &channels,
+                           StbFormat.STBI_rgb_alpha);
+
+    if(!pixels) {
+        log(LogLevel.ERROR, "'%s' texture not loaded", filename)
+    }
+
+    var tex = LoadTexture(pixels as (u8*), width, height)
+
+    if(pixels) {
+        stbi_image_free(pixels)
+    }
+
+    return tex
+}
+
+public func LoadTexture(pixels: u8*, width: f32, height: f32) : Texture {
+    var tex: GLuint;
+    glGenTextures(1, &tex)
+    glBindTexture(GL_TEXTURE_2D, tex)
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels)
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+
+   // glGenerateMipmap(GL_TEXTURE_2D)
+
+    return Texture{
+        .texId = tex,
+        .width = width,
+        .height = height
+    }
+}
+
+public func DestroyTexture(tex: Texture) {
+    glDeleteTextures(1, &tex.texId)    
+}

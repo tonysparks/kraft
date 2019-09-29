@@ -1,0 +1,89 @@
+import "opengl"
+import "array"
+import "io"
+import "texture"
+
+public struct Model {
+    vao: GLuint
+    ebo: GLuint
+    vbo: GLuint
+    tex: Texture
+
+    indexCount: i32
+}
+
+public enum AttribPos {
+    POSITION = 0,
+    COLOR    = 1,
+    TEXCOORD = 2,
+}
+
+/**
+    data includes:
+    3 floats Position
+    4 floats Color
+    2 floats TexCoord
+*/    
+public func LoadModel(indices: u32*, indexLen: i32, 
+                      data: f32*, dataLen: i32,
+                      tex: Texture) : Model {    
+    
+    var vao: GLuint;
+    glGenVertexArrays(1, &vao)
+    glBindVertexArray(vao)
+
+    var ebo: GLuint;
+    glGenBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo)
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexLen * sizeof(:u32), indices, GL_STATIC_DRAW)
+
+    var vbo: GLuint;
+    glGenBuffers(1, &vbo)
+    glBindBuffer(GL_ARRAY_BUFFER, vbo)
+    glBufferData(GL_ARRAY_BUFFER, dataLen * sizeof(:f32), data, GL_STATIC_DRAW)
+
+    // Bind vertex shader attributes
+    var vertexLen = 9 * sizeof(:f32)
+    glVertexAttribPointer(AttribPos.POSITION, 3, GL_FLOAT, GL_FALSE, vertexLen, 0)
+    glVertexAttribPointer(AttribPos.COLOR,    4, GL_FLOAT, GL_FALSE, vertexLen, (3 * sizeof(:f32)) as (void*))
+    glVertexAttribPointer(AttribPos.TEXCOORD, 2, GL_FLOAT, GL_FALSE, vertexLen, (7 * sizeof(:f32)) as (void*))
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0) // unbind data buffer
+    glBindVertexArray(0) // unbind vertex array buffer
+
+    return Model {
+        .vao: vao,
+        .ebo: ebo,
+        .vbo: vbo,
+        .tex: tex,
+        .indexCount: indexLen
+    }
+
+}
+
+public func (model: Model*) destroy() {  
+    glDeleteVertexArrays(1, &model.vao)
+    glDeleteBuffers(1, &model.ebo)
+    glDeleteBuffers(1, &model.vbo)
+    model.indexCount = 0
+}
+
+public func (model: Model*) render() {    
+    glBindVertexArray(model.vao)
+
+    // TODO, batch this state
+    glEnableVertexAttribArray(AttribPos.POSITION)
+    glEnableVertexAttribArray(AttribPos.COLOR)
+    glEnableVertexAttribArray(AttribPos.TEXCOORD)
+	
+    glActiveTexture(GL_TEXTURE0)
+	glBindTexture(GL_TEXTURE_2D, model.tex.texId)
+
+    glDrawElements(GL_TRIANGLES, model.indexCount, GL_UNSIGNED_INT, 0)
+
+	glDisableVertexAttribArray(AttribPos.POSITION)
+    glDisableVertexAttribArray(AttribPos.COLOR)
+    glDisableVertexAttribArray(AttribPos.TEXCOORD)
+	glBindVertexArray(0)
+
+}

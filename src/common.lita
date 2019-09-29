@@ -1,0 +1,97 @@
+import "glfw"
+import "libc" as c;
+
+@include("<stdarg.h>");
+@include("<stdio.h>");
+
+
+@raw("""
+    #define MIN(x, y) ((x) <= (y) ? (x) : (y))
+    #define MAX(x, y) ((x) >= (y) ? (x) : (y))
+    #define ABS(x)    ((x < 0) ? (x) * -1 : (x))  
+""");
+
+
+
+@foreign struct FILE;
+@foreign struct va_list;
+@foreign public func va_start(args: va_list, format: char const*);
+@foreign public func va_end(args: va_list);
+@foreign public func vfprintf(f:FILE*, format: char const*, args: va_list);
+@foreign public func vsprintf_s(ptr: void*, len: u64, format: char const*, args: va_list) : i32;
+@foreign public func vsnprintf_s(ptr: void*, len: u64, max: u64, format: char const*, args: va_list) : i32;
+@foreign public func exit(code: i32);
+@foreign public func fputs(format: char const*,f:FILE*);
+@foreign public const stderr : FILE*;
+@foreign public const stdout : FILE*;
+@foreign public func strncpy(dest: char*, src: char const*, num: u64) : char*;
+@foreign public func strcpy(dest: char*, src: char const*) : char*;
+@foreign public func strlen(str: char const*) : i32;
+@foreign public func strncmp(a: char const*, b: char const*, num: u64) : i32;
+@foreign public func strcmp(a: char const*, b: char const*) : i32;
+@foreign public func snprintf(s: char*, n: u64, format: char const*, ...): i32;
+
+@foreign public func isspace(c: char) : bool;
+//@foreign func strlen(str: char const*) : u64;
+//@foreign func strncmp(a: char const*, b: char const*, size: i32) : u64;
+@foreign public func strtol(str: char const*, end: char**, base: i32) : i64;
+@foreign public func strtod(str: char const*, end: char**) : f64;
+
+@foreign public func MAX(a: i32, b: i32) : i32;
+@foreign public func MIN(a: i32, b: i32) : i32;
+@foreign public func ABS(a: f32) : f32;
+
+public func toDegrees(radians: f32) : f32 {
+    return radians * 180.0_f32 / c::M_PI
+}
+
+public func toRadians(degrees: f32) : f32 {
+    return degrees * c::M_PI / 180.0_f32
+}
+
+public typedef i64 as Time;
+
+/*
+public typedef Vector2 as Vec2;
+public typedef Vector3 as Vec3;
+public typedef Vector4 as Vec4;
+public typedef Rectangle as Rect;
+*/
+
+public struct TimeStep {
+    frameTime: Time;          /* time from last frame */
+    gameClock: Time;          /* current game clock */
+    frameTimeFraction: f64;   /* time from last frame in fractions of seconds */
+} 
+
+public func GetTicks() : Time {
+    return (glfwGetTime() * 1_000_i64) as (i64)    
+}
+
+public enum LogLevel {
+    TRACE,
+    INFO,
+    DEBUG,
+    ERROR,
+    FATAL
+}
+
+public func log(level: LogLevel, format: char const*, ...) {
+    var args: va_list;
+    va_start(args, format);
+    
+    if(level > LogLevel.DEBUG) {
+        vfprintf(stderr, format, args);            
+        va_end(args);    
+        fputs("\n", stderr);
+    }
+    else {
+        vfprintf(stdout, format, args);            
+        va_end(args);    
+        fputs("\n", stdout);
+    }
+
+    if(level == LogLevel.FATAL) {
+        exit(2);
+    }
+}
