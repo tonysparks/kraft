@@ -1,5 +1,6 @@
 
 import using "cglm/types"
 import using "cglm/cam"
+import using "cglm/vec3"
 import using "cglm/mat4"
 import using "cglm/affine"

@@ -3,8 +3,10 @@ import "io"
 
 import "main"
 import "glfw"
+import "cglm/cglm"
 
 public typedef i32 as Keymods
+public typedef vec3 as MousePos
 
 public enum Keymod {
     KMOD_NONE   = 0,
@@ -45,7 +47,7 @@ public typedef func(KeyEvent*) : bool as OnKeyEvent;
 public struct MouseEvent {
     type: EventType
     button: i32
-   // pos: Vec2
+    pos: vec2
     flags: i32
     wheelDir: i32
 }
@@ -74,16 +76,22 @@ struct InputSys {
     numKeyListeners: i32
     numMouseListeners: i32
 
-    //mousePos: Vec2
+    mousePos: MousePos
+    prevMousePos: MousePos
+    deltaMousePos: MousePos
+
     keys: [MAX_KEYS]Key
     buttons: [MAX_BUTTONS]Button
     isCaps: bool
     isInsert: bool
 }
 
-const inputSys = InputSys{}
+const inputSys = InputSys{
+}
 
 public func InputSysInit() {
+    //inputSys.mousePos = MousePos{0,0}
+    //inputSys.deltaMousePos = MousePos{0,0}
 }
 
 public func InputSysDestroy() {
@@ -122,12 +130,20 @@ public func InputSysIsKeyPressed(keyCode: i32) : bool {
     return key.timePressed > 0
 }
 
-/*
-public func InputSysIsButtonPressed(b: ray::MouseButton) : bool {
+
+public func InputSysIsButtonPressed(b: i32) : bool {
     var btn = &inputSys.buttons[b]
     return btn.timePressed > 0
 }
-*/
+
+public func InputSysGetMousePos(pos : MousePos) {
+    GetMousePos(pos)
+}
+
+public func InputSysGetMouseDeltaPos(pos : MousePos) {
+    glm_vec3_copy(inputSys.deltaMousePos, pos)
+}
+
 func PollKeyboard(timeStep: TimeStep*) {
     const validKeyIndex = 32
     for(var i = validKeyIndex; i < MAX_KEYS; i+=1) {
@@ -170,11 +186,17 @@ func PollKeyboard(timeStep: TimeStep*) {
     }*/ 
 }
 
-func PollMouse(timeStep: TimeStep*) {   
-    /* 
+func PollMouse(timeStep: TimeStep*) { 
+
+    glm_vec3_copy(inputSys.mousePos, inputSys.prevMousePos)    
+    InputSysGetMousePos(inputSys.mousePos)
+
+    glm_vec3_sub(inputSys.mousePos, inputSys.prevMousePos, inputSys.deltaMousePos)
+    
     for(var i = 0; i < MAX_BUTTONS; i += 1) {
         var btn = &inputSys.buttons[i]
-        if(ray::IsMouseButtonDown(i)) {
+        var state = GetMouseButtonState(i)
+        if(state == GLFW_PRESS) {
             if(btn.timePressed == 0) {
                 btn.timePressed = timeStep.gameClock
                 btn.timeEventEmit = timeStep.gameClock
@@ -189,7 +211,7 @@ func PollMouse(timeStep: TimeStep*) {
                 }
             }
         }
-        else if(ray::IsMouseButtonUp(i) && btn.timePressed) {
+        else if(state == GLFW_RELEASE && btn.timePressed) {
             btn.timePressed = 0
             btn.timeEventEmit = timeStep.gameClock
 
@@ -197,11 +219,12 @@ func PollMouse(timeStep: TimeStep*) {
         }
     }
 
+    /*
     var wheelDir = ray::GetMouseWheelMove()
     if(wheelDir) {
         emitMouseEvent(-1, EventType.MOUSE_WHEEL)
-    }
-    */
+    }*/
+    
 }
 
 func emitMouseEvent(buttonCode: i32, type: EventType) {    
