@@ -1,0 +1,20 @@
+import "cglm/cglm"
+import "math"
+import "common"
+
+
+public struct Entity {
+    pos: vec3
+    rot: vec3
+    scale: f32
+
+    xform: mat4
+}
+
+public func (e: Entity*) update(timeStep: TimeStep*) {    
+    TransformMatrix(e.xform, e.pos, e.rot, e.scale)
+}
+
+public func (e: Entity*) transform(m: mat4) {    
+    TransformMatrix(m, e.pos, e.rot, e.scale)
+}

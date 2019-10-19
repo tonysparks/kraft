@@ -14,7 +14,7 @@ public struct Model {
 
 public enum AttribPos {
     POSITION = 0,
-    COLOR    = 1,
+    NORMAL   = 1,
     TEXCOORD = 2,
 }
 
@@ -26,7 +26,8 @@ public enum AttribPos {
 */    
 public func LoadModel(indices: u32*, indexLen: i32, 
                       data: f32*, dataLen: i32,
-                      tex: Texture) : Model {    
+                      tex: Texture,
+                      model: Model*) {
     
     var vao: GLuint;
     glGenVertexArrays(1, &vao)
@@ -43,22 +44,19 @@ public func LoadModel(indices: u32*, indexLen: i32,
     glBufferData(GL_ARRAY_BUFFER, dataLen * sizeof(:f32), data, GL_STATIC_DRAW)
 
     // Bind vertex shader attributes
-    var vertexLen = 9 * sizeof(:f32)
+    var vertexLen = 8 * sizeof(:f32)
     glVertexAttribPointer(AttribPos.POSITION, 3, GL_FLOAT, GL_FALSE, vertexLen, 0)
-    glVertexAttribPointer(AttribPos.COLOR,    4, GL_FLOAT, GL_FALSE, vertexLen, (3 * sizeof(:f32)) as (void*))
-    glVertexAttribPointer(AttribPos.TEXCOORD, 2, GL_FLOAT, GL_FALSE, vertexLen, (7 * sizeof(:f32)) as (void*))
+    glVertexAttribPointer(AttribPos.NORMAL,   3, GL_FLOAT, GL_FALSE, vertexLen, (3 * sizeof(:f32)) as (void*))
+    glVertexAttribPointer(AttribPos.TEXCOORD, 2, GL_FLOAT, GL_FALSE, vertexLen, (6 * sizeof(:f32)) as (void*))
 
     glBindBuffer(GL_ARRAY_BUFFER, 0) // unbind data buffer
     glBindVertexArray(0) // unbind vertex array buffer
 
-    return Model {
-        .vao: vao,
-        .ebo: ebo,
-        .vbo: vbo,
-        .tex: tex,
-        .indexCount: indexLen
-    }
-
+    model.vao = vao;
+    model.ebo = ebo;
+    model.vbo = vbo;
+    model.tex = tex;
+    model.indexCount = indexLen;
 }
 
 public func (model: Model*) destroy() {  
@@ -73,7 +71,7 @@ public func (model: Model*) render() {
 
     // TODO, batch this state
     glEnableVertexAttribArray(AttribPos.POSITION)
-    glEnableVertexAttribArray(AttribPos.COLOR)
+    glEnableVertexAttribArray(AttribPos.NORMAL)
     glEnableVertexAttribArray(AttribPos.TEXCOORD)
 	
     glActiveTexture(GL_TEXTURE0)
@@ -82,7 +80,7 @@ public func (model: Model*) render() {
     glDrawElements(GL_TRIANGLES, model.indexCount, GL_UNSIGNED_INT, 0)
 
 	glDisableVertexAttribArray(AttribPos.POSITION)
-    glDisableVertexAttribArray(AttribPos.COLOR)
+    glDisableVertexAttribArray(AttribPos.NORMAL)
     glDisableVertexAttribArray(AttribPos.TEXCOORD)
 	glBindVertexArray(0)
 

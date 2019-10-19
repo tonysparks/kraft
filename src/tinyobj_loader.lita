@@ -1,0 +1,80 @@
+@raw("""
+#define TINYOBJ_LOADER_C_IMPLEMENTATION
+#include <tinyobj_loader.h>
+""");
+
+@foreign
+public struct tinyobj_material_t {
+   name: char*
+   ambient: [3]f32
+   diffuse: [3]f32
+   specular: [3]f32
+   transmittance: [3]f32
+   emission: [3]f32
+   shininess: f32
+   ior: f32
+   dissolve: f32
+   illum: i32
+   pad0: i32
+   ambient_texname: char*
+   diffuse_texname: char*
+   specular_texname: char*
+   specular_highlight_texname: char*
+   bump_texname: char*
+   displacement_texname: char*
+   alpha_texname: char*
+}
+
+public struct tinyobj_shape_t {
+  name: char*; /* group name or object name. */
+  face_offset: u32
+  length: u32;
+} 
+
+@foreign
+public struct tinyobj_vertex_index_t { 
+    v_idx: i32
+    vt_idx: i32
+    vn_idx: i32
+}
+
+@foreign
+public struct tinyobj_attrib_t {
+    num_vertices: u32
+    num_normals: u32
+    num_texcoords: u32
+    num_faces: u32
+    num_face_num_verts: u32
+    pad0: i32
+    vertices: f32*
+    normals: f32*
+    texcoords: f32*
+    faces: tinyobj_vertex_index_t*
+    face_num_verts: i32*
+    material_ids: i32*
+} 
+
+@foreign
+public func tinyobj_parse_obj(p0: tinyobj_attrib_t*, p1: tinyobj_shape_t**, p2: u64*, p3: tinyobj_material_t**, p4: u64*, p5: char const*, p6: u64, p7: u32) : i32;
+
+@foreign
+public func tinyobj_parse_mtl_file(p0: tinyobj_material_t**, p1: u64*, p2: char const*) : i32;
+
+@foreign
+public func tinyobj_attrib_init(p0: tinyobj_attrib_t*) : void;
+
+@foreign
+public func tinyobj_attrib_free(p0: tinyobj_attrib_t*) : void;
+
+@foreign
+public func tinyobj_shapes_free(p0: tinyobj_shape_t*, p1: u64) : void;
+
+@foreign
+public func tinyobj_materials_free(p0: tinyobj_material_t*, p1: u64) : void;
+// empty macro!!
+@foreign public const TINYOBJ_FLAG_TRIANGULATE: i32;
+@foreign public const TINYOBJ_INVALID_INDEX: i32;
+@foreign public const TINYOBJ_SUCCESS: i32;
+@foreign public const TINYOBJ_ERROR_EMPTY: i32;
+@foreign public const TINYOBJ_ERROR_INVALID_PARAMETER: i32;
+@foreign public const TINYOBJ_ERROR_FILE_OPERATION: i32;

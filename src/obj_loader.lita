@@ -1,0 +1,67 @@
+import "cglm/cglm"
+import "io"
+//import "libc" as c
+import "model"
+import "common"
+import "mem"
+import "string_buffer"
+
+import "tinyobj_loader"
+
+public func LoadOBJFromFile(filename: char const*, model: Model*) : bool {
+    var buf: char*;
+    defer if(buf) defaultAllocator.free(buf)
+
+    var status = ReadFile(filename,&buf)
+    if(status != FileStatus.Ok) {
+        log(LogLevel.ERROR, "Unable to load '%s'", filename)
+        return false;
+    }
+
+    if(buf == null) {
+        log(LogLevel.ERROR, "Unable to load '%s' - no memory", filename)
+        return false;
+    }
+
+    var len = FileLength(filename)
+    return LoadOBJFromMem(buf, len, model)
+}
+
+public func LoadOBJFromMem(buf: char*, len: i64, model: Model*) : bool {
+    var line = 0
+    var sb = StringBufferInit()
+    defer sb.free()
+
+    var attrib: tinyobj_attrib_t;
+    var shapes: tinyobj_shape_t* = null;
+    var numShapes = 0;
+    var materials: tinyobj_material_t* = null;
+    var numMaterials = 0;
+
+    const flags = TINYOBJ_FLAG_TRIANGULATE
+    var ret = tinyobj_parse_obj(&attrib, &shapes, &numShapes, &materials,
+                                &numMaterials, buf, len, flags);
+
+    if (ret != TINYOBJ_SUCCESS) {
+        return false;
+    }
+
+    defer tinyobj_materials_free(materials, numMaterials)
+    defer tinyobj_shapes_free(shapes, numShapes)
+    defer tinyobj_attrib_free(&attrib)
+
+    var numTriangles = attrib.num_face_num_verts;
+    var stride = 8; /* pos(3), normal(3), uv(2) */
+
+    var vb = defaultAllocator.alloc(sizeof(:f32) * stride * numTriangles * 3);
+/*
+    for(var i = 0; i < numTriangles; i+=1) {
+        var f: u64 = 0;
+
+        for(; f < attrib.face_num_verts[i] / 3; f+=1) {
+            var k: u64;
+        }
+    }
+*/
+    return true;
+}

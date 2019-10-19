@@ -1,0 +1,6 @@
+import "cglm/cglm"
+
+public struct Light {
+    pos: vec3
+    color: vec3
+}
