@@ -1,4 +1,8 @@
 import "opengl"
+import "cglm/cglm"
+import "shader"
+import "entity"
+import "model"
 
 public func Prepare() {    
     glEnable(GL_DEPTH_TEST)
@@ -9,3 +13,33 @@ public func Prepare() {
     glClearColor(0f, 0.5f, 0.75f, 1f)    
 }
 
+public func BatchEntityRender(entities: Entity*, len: i32, model: Model*, shader: ShaderProgram, viewMatrix: mat4) {
+    shader.bind()
+    shader.loadMat4ByName("viewMatrix", viewMatrix)
+    shader.loadFloatByName("shineDamper", 10f)
+    shader.loadFloatByName("reflectivity", 1f)
+
+    glEnableVertexAttribArray(AttribPos.POSITION)
+    glEnableVertexAttribArray(AttribPos.NORMAL)
+    glEnableVertexAttribArray(AttribPos.TEXCOORD)
+    
+    glBindVertexArray(model.vao)
+    glActiveTexture(GL_TEXTURE0)
+    glBindTexture(GL_TEXTURE_2D, model.tex.texId)
+
+    var transformMatrix: mat4;
+
+    for(var i = 0; i < len; i +=1) {
+        var ent = &entities[i]
+        ent.transform(transformMatrix)
+        shader.loadMat4ByName("transformationMatrix", transformMatrix)
+
+        glDrawElements(GL_TRIANGLES, model.indexCount, GL_UNSIGNED_INT, 0)
+    }
+    
+    glDisableVertexAttribArray(AttribPos.POSITION)
+    glDisableVertexAttribArray(AttribPos.NORMAL)
+    glDisableVertexAttribArray(AttribPos.TEXCOORD)
+
+    shader.unbind()
+}

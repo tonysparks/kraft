@@ -133,7 +133,8 @@ var box = Entity {
 
 const GX = 40
 const GY = 40
-var ground: [GY][GX]Entity;
+const SIZE = GY*GX
+var ground: [SIZE]Entity;
 
 var light = Light {
     .pos = vec3{0, 100, 0},
@@ -173,13 +174,15 @@ func Init() {
 
     //LoadOBJFromFile("../assets/skull.obj", &model2)
 
+    var i = 0
     for(var z = 0; z < GY; z+=1) {
         for(var x = 0; x < GX; x+=1) {
-            var t = &ground[z][x]
+            var t = &ground[i]
             t.pos[0] = x * 2;
             t.pos[1] = 0;
             t.pos[2] = z * -2;
             t.scale = 1f
+            i+=1
         }
     }
 
@@ -260,34 +263,7 @@ func Draw(alpha: f32) {
     glm_mat4_identity(viewMatrix)    
     camera.viewMatrix(viewMatrix)
 
-    shader.bind()
-    
-    shader.loadMat4ByName("viewMatrix", viewMatrix)
-    shader.loadFloatByName("shineDamper", 10f)
-    shader.loadFloatByName("reflectivity", 1f)
-
-    for(var z = 0; z < GY; z+=1) {
-        for(var x = 0; x < GX; x+=1) {
-            var t = &ground[z][x]
-
-            t.transform(transformMatrix)
-            shader.loadMat4ByName("transformationMatrix", transformMatrix)
-            model.render()        
-        }
-    }
-
-    box.transform(transformMatrix)
-    shader.loadMat4ByName("transformationMatrix", transformMatrix)
-
-//    glm_mat4_identity(viewMatrix)    
-//    camera.viewMatrix(viewMatrix)
-
-//    shader.loadMat4ByName("viewMatrix", viewMatrix)
-//    shader.loadFloatByName("shineDamper", 10f)
-//    shader.loadFloatByName("reflectivity", 1f)
-
-    model.render()
-    shader.unbind()
+    BatchEntityRender(ground, SIZE, &model, shader, viewMatrix)
 //    GameDraw();
 //   ConsoleDraw();
 }

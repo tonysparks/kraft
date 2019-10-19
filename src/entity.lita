@@ -2,7 +2,6 @@ import "cglm/cglm"
 import "math"
 import "common"
 
-
 public struct Entity {
     pos: vec3
     rot: vec3
