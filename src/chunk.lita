@@ -1,0 +1,131 @@
+import "opengl"
+import "texture"
+import "entity"
+import "block"
+import "cglm/cglm"
+import "shader"
+import "model"
+import "math"
+import "libc"
+
+public const CHUNK_WIDTH  = 32
+public const CHUNK_HEIGHT = 32
+public const CHUNK_DEPTH  = 32
+public const CHUNK_SIZE = CHUNK_HEIGHT * CHUNK_WIDTH * CHUNK_DEPTH
+
+public struct Chunk {    
+    blocks: [CHUNK_WIDTH][CHUNK_HEIGHT][CHUNK_DEPTH]Block
+    pos: vec3
+}
+
+public func (chunk: Chunk*) init(pos: vec3) {    
+    for(var x = 0; x < CHUNK_WIDTH; x +=1) {
+        for(var y = 0; y < CHUNK_HEIGHT; y +=1) {
+            for(var z = 0; z < CHUNK_DEPTH; z +=1) {                
+                var block = &chunk.blocks[x][y][z]
+                block.type = BlockType.GRASS
+                // pos[0] == 0 ? BlockType.GRASS : BlockType.EMPTY
+                block.pos[0] = pos[0] + x*2
+                block.pos[1] = pos[1] + y*2
+                block.pos[2] = pos[2] + z*2
+                block.flags  = 0    
+            }
+        }
+    }
+
+    chunk.pos[0] = pos[0]
+    chunk.pos[1] = pos[1]
+    chunk.pos[2] = pos[2]
+    chunk.refresh()
+}
+
+public func (chunk: Chunk*) refresh() {   
+    for(var x = 0; x < CHUNK_WIDTH; x +=1) {
+        for(var y = 0; y < CHUNK_HEIGHT; y +=1) {
+            for(var z = 0; z < CHUNK_DEPTH; z +=1) {
+                chunk.checkVisibility(x,y,z)
+            }
+        }
+    }
+}
+
+@inline
+public func (chunk: Chunk*) getBlock(x:i32, y:i32, z:i32) : Block* {
+    if(x < 0 || x >= CHUNK_WIDTH)  return null;
+    if(y < 0 || y >= CHUNK_HEIGHT) return null;
+    if(z < 0 || z >= CHUNK_DEPTH)  return null;
+
+    return &chunk.blocks[x][y][z]    
+}
+
+public func (chunk: Chunk*) checkVisibility(x:i32, y:i32, z:i32) {   
+    var upBlock     = chunk.getBlock(x + 0, y + 1, z + 0)
+    var bottomBlock = chunk.getBlock(x + 0, y - 1, z + 0)
+    var rightBlock  = chunk.getBlock(x + 1, y + 0, z + 0)
+    var leftBlock   = chunk.getBlock(x - 1, y + 0, z + 0)
+    var frontBlock  = chunk.getBlock(x + 0, y + 0, z + 1)
+    var backBlock   = chunk.getBlock(x + 0, y + 0, z - 1)
+    
+    if((upBlock && upBlock.type != BlockType.EMPTY) &&
+        (bottomBlock && bottomBlock.type != BlockType.EMPTY) &&
+        (rightBlock && rightBlock.type != BlockType.EMPTY) &&
+        (leftBlock && leftBlock.type != BlockType.EMPTY) &&
+        (frontBlock && frontBlock.type != BlockType.EMPTY) &&
+        (backBlock && backBlock.type != BlockType.EMPTY)) {
+        
+        var block = &chunk.blocks[x][y][z]
+        block.flags |= BlockFlag.INVISIBLE    
+        //printf("Should be Invisible Index: %d --- top: %d, bot: %d, L: %d, R: %d, F: %d, B: %d\n", index, 
+        //    chunk.getIndexAt(up), chunk.getIndexAt(bottom), chunk.getIndexAt(right), chunk.getIndexAt(left), chunk.getIndexAt(front), chunk.getIndexAt(back))
+
+    }
+}
+
+public func (chunk: Chunk*) draw(shader: ShaderProgram, texture: Texture, viewMatrix: mat4) {   
+    shader.bind()
+    shader.loadMat4ByName("viewMatrix", viewMatrix)
+    shader.loadFloatByName("shineDamper", 10f)
+    shader.loadFloatByName("reflectivity", 1f)
+
+    glEnableVertexAttribArray(AttribPos.POSITION)
+    glEnableVertexAttribArray(AttribPos.NORMAL)
+    glEnableVertexAttribArray(AttribPos.TEXCOORD)
+    
+    @raw("CGLM_ALIGN_MAT ")
+    var transformMatrix: mat4;
+    glm_mat4_identity(transformMatrix)
+
+    var rot = vec3{0,0,0}
+
+    glActiveTexture(GL_TEXTURE0)
+    glBindTexture(GL_TEXTURE_2D, texture.texId)
+
+    for(var x = 0; x < CHUNK_WIDTH; x +=1) {
+        for(var y = 0; y < CHUNK_HEIGHT; y +=1) {
+            for(var z = 0; z < CHUNK_DEPTH; z +=1) {
+                var block = &chunk.blocks[x][y][z]        
+                if(block.type == BlockType.EMPTY || block.flags & BlockFlag.INVISIBLE) {
+                    continue;
+                }
+
+                var model: Model* = GetBlock(block.type)
+                
+                glBindVertexArray(model.vao)
+                //glActiveTexture(GL_TEXTURE0)
+                //glBindTexture(GL_TEXTURE_2D, model.tex.texId)
+
+                TransformMatrix(transformMatrix, block.pos, rot, 1.0f)
+                shader.loadMat4ByName("transformationMatrix", transformMatrix)
+
+                glDrawElements(GL_TRIANGLES, model.indexCount, GL_UNSIGNED_INT, 0)
+                //glBindVertexArray(0)      
+            }
+        }  
+    }
+    
+    glDisableVertexAttribArray(AttribPos.POSITION)
+    glDisableVertexAttribArray(AttribPos.NORMAL)
+    glDisableVertexAttribArray(AttribPos.TEXCOORD)
+
+    shader.unbind()
+}

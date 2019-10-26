@@ -1,0 +1,96 @@
+import "cglm/cglm"
+import "model"
+import "texture"
+
+const blocks = [BlockType.MAX_BLOCK_TYPES]Model;
+
+
+const W = 256f;
+const X = ((W/16f) / W)
+const S = (1f / 2048f) * 4f
+const S3 = S*4f
+const S4 = S*4f
+
+/*
+    3 floats Position
+    3 floats Normal
+    2 floats TexCoord
+*/    
+const grass = []f32 { 
+    //Position ----|Normal------|Tex
+
+    // front side
+    -1f, -1f, +1f,  0f, 0f, -1f,   X - S, X*1f,
+    +1f, -1f, +1f,  0f, 0f, -1f,  0f + S, X*1f,  
+    +1f, +1f, +1f,  0f, 0f, -1f,  0f + S, X*2f,	
+    -1f, +1f, +1f,  0f, 0f, -1f,   X - S, X*2f,   	
+    
+    // right side
+    +1f, +1f, +1f,  1f, 0f, 0f,   X - S, X*2f,
+    +1f, +1f, -1f,  1f, 0f, 0f,  0f + S, X*2f,  
+    +1f, -1f, -1f,  1f, 0f, 0f,  0f + S, X*1f,
+    +1f, -1f, +1f,  1f, 0f, 0f,   X - S, X*1f, 
+    
+    // rear side
+    -1f, -1f, -1f,  0f, 0f, 1f,   X - S, X*1f,	
+    +1f, -1f, -1f,  0f, 0f, 1f,  0f + S, X*1f,  
+    +1f, +1f, -1f,  0f, 0f, 1f,  0f + S, X*2f,
+    -1f, +1f, -1f,  0f, 0f, 1f,   X - S, X*2f, 
+    
+    // left side
+    -1f, -1f, -1f, -1f, 0f, 0f,   X - S, X*1f,	
+    -1f, -1f, +1f, -1f, 0f, 0f,  0f + S, X*1f,  
+    -1f, +1f, +1f, -1f, 0f, 0f,  0f + S, X*2f,
+    -1f, +1f, -1f, -1f, 0f, 0f,   X - S, X*2f, 
+    
+    // top
+    +1f, +1f, +1f,  0f, 1f, 0f,  0f + S, X*3f - S,
+    -1f, +1f, +1f,  0f, 1f, 0f,  0f + S, X*2f + S,  
+    -1f, +1f, -1f,  0f, 1f, 0f,   X - S, X*2f + S,
+    +1f, +1f, -1f,  0f, 1f, 0f,   X - S, X*3f - S, 
+    
+    // bottom
+    -1f, -1f, -1f,  0f, -1f, 0f,  0f + S,  X - S,    
+    +1f, -1f, -1f,  0f, -1f, 0f,  0f + S, 0f + S,  
+    +1f, -1f, +1f,  0f, -1f, 0f,   X - S, 0f + S,
+    -1f, -1f, +1f,  0f, -1f, 0f,   X - S,  X - S,   
+
+
+}
+
+const indices = []u32 {    
+    0,  1,  2,  0,  2,  3,   //front
+    4,  6,  5,  6,  4,  7,   //right
+    8,  10,  9, 8,  11, 10,  //back
+    12, 13, 14, 12, 14, 15,  //left
+    16, 18, 17, 18, 16, 19,  //top
+    20, 21, 22, 20, 22, 23   //bottom
+}
+
+public enum BlockType {
+    EMPTY,
+    GRASS,
+    MAX_BLOCK_TYPES
+}
+
+public enum BlockFlag {
+    INVISIBLE = (1<<0)
+}
+
+public struct Block {
+    type: BlockType
+    pos: vec3
+    flags: i32
+}
+
+public func LoadBlocks(texture: Texture) {    
+    var indexLength = 36; 
+    var dataLength =  8 * 4 * 6;    
+
+    LoadModel(indices, indexLength, grass, dataLength, texture, &blocks[BlockType.GRASS])
+}
+
+@inline
+public func GetBlock(blockType: BlockType) : Model* {
+    return &blocks[blockType];
+}

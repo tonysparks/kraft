@@ -15,6 +15,8 @@ import "light"
 import "entity"
 import "math"
 import "obj_loader"
+import "block"
+import "chunk"
 
 import "libc" as c
 
@@ -38,70 +40,10 @@ const FAR_PLANE  = 10_000f
 
 var isRunning = false;
 
+/*
 var model = Model{};
 var model2 = Model{};
-
-const W = 256f;
-const X = ((W/16f) / W)
-const S = (1f / 2048f) * 4f
-const S3 = S*4f
-const S4 = S*4f
-/*
-    3 floats Position
-    3 floats Normal
-    2 floats TexCoord
-*/    
-const data = []f32 { 
-    //Position ----|Normal------|Tex
-
-    // front side
-    -1f, -1f, +1f,  0f, 0f, -1f,   X - S, X*1f,
-    +1f, -1f, +1f,  0f, 0f, -1f,  0f + S, X*1f,  
-    +1f, +1f, +1f,  0f, 0f, -1f,  0f + S, X*2f,	
-    -1f, +1f, +1f,  0f, 0f, -1f,   X - S, X*2f,   	
-    
-    // right side
-    +1f, +1f, +1f,  1f, 0f, 0f,   X - S, X*2f,
-    +1f, +1f, -1f,  1f, 0f, 0f,  0f + S, X*2f,  
-    +1f, -1f, -1f,  1f, 0f, 0f,  0f + S, X*1f,
-    +1f, -1f, +1f,  1f, 0f, 0f,   X - S, X*1f, 
-    
-    // rear side
-    -1f, -1f, -1f,  0f, 0f, 1f,   X - S, X*1f,	
-    +1f, -1f, -1f,  0f, 0f, 1f,  0f + S, X*1f,  
-    +1f, +1f, -1f,  0f, 0f, 1f,  0f + S, X*2f,
-    -1f, +1f, -1f,  0f, 0f, 1f,   X - S, X*2f, 
-    
-    // left side
-    -1f, -1f, -1f, -1f, 0f, 0f,   X - S, X*1f,	
-    -1f, -1f, +1f, -1f, 0f, 0f,  0f + S, X*1f,  
-    -1f, +1f, +1f, -1f, 0f, 0f,  0f + S, X*2f,
-    -1f, +1f, -1f, -1f, 0f, 0f,   X - S, X*2f, 
-    
-    // top
-    +1f, +1f, +1f,  0f, 1f, 0f,  0f + S, X*3f - S,
-    -1f, +1f, +1f,  0f, 1f, 0f,  0f + S, X*2f + S,  
-    -1f, +1f, -1f,  0f, 1f, 0f,   X - S, X*2f + S,
-    +1f, +1f, -1f,  0f, 1f, 0f,   X - S, X*3f - S, 
-    
-    // bottom
-    -1f, -1f, -1f,  0f, -1f, 0f,  0f + S,  X - S,    
-    +1f, -1f, -1f,  0f, -1f, 0f,  0f + S, 0f + S,  
-    +1f, -1f, +1f,  0f, -1f, 0f,   X - S, 0f + S,
-    -1f, -1f, +1f,  0f, -1f, 0f,   X - S,  X - S,   
-
-
-}
-
-const indices = []u32 {    
-    0,  1,  2,  0,  2,  3,   //front
-    4,  6,  5,  6,  4,  7,   //right
-    8,  10,  9, 8,  11, 10,  //back
-    12, 13, 14, 12, 14, 15,  //left
-    16, 18, 17, 18, 16, 19,  //top
-    20, 21, 22, 20, 22, 23   //bottom
-   
-}
+*/
 
 func array_length<T>(array: T*) : i32 {
     return (sizeof(array) / sizeof(array[0])) as (i32)
@@ -130,6 +72,9 @@ var box = Entity {
     .scale = 1f,
     .xform = mat4{0}
 }
+
+const MAX_CHUNKS = 10
+var chunks: [MAX_CHUNKS]Chunk;
 
 const GX = 40
 const GY = 40
@@ -165,15 +110,30 @@ func Init() {
     glCheckErrorPrint()
 
     texture = LoadTextureFromFile("../assets/texture.png")
+/*    
     printf("Width: %f Height: %f\n", texture.width, texture.height)
     var indexLength = 36; // array_length<u32>(indices)
     var dataLength =  8 * 4 * 6;// array_length<f32>(data)
     printf("I: %d, D: %d\n", indexLength, dataLength)
     LoadModel(indices, indexLength, data, dataLength, texture, &model)
+*/
 
+    LoadBlocks(texture)
+
+    var z = 0
+    var x = 0
+    for(var i = 0; i < MAX_CHUNKS; i += 1) {
+        if(i % 5 == 0) {
+            z += 1
+            x = 0
+        }
+        chunks[i].init(vec3{CHUNK_WIDTH*(x*2),0,CHUNK_DEPTH*(z*2)})
+        x += 1
+    }
 
     //LoadOBJFromFile("../assets/skull.obj", &model2)
 
+/*
     var i = 0
     for(var z = 0; z < GY; z+=1) {
         for(var x = 0; x < GX; x+=1) {
@@ -185,6 +145,7 @@ func Init() {
             i+=1
         }
     }
+*/    
 
     var aspectRatio = (GetWindowWidth() as (f32) / GetWindowHeight() as (f32)) as (f32);
 	var yScale = ((1f / c::tan(toRadians(FOV /2f))) * aspectRatio) as (f32);
@@ -253,17 +214,19 @@ func Update(timeStep: TimeStep*) {
     var m = MousePos{0,0}
     InputSysGetMouseDeltaPos(m)
     camera.move(controls, m[0], m[1])
-    
+
+    glm_mat4_identity(viewMatrix)    
+    camera.viewMatrix(viewMatrix)
 }
 
 func Draw(alpha: f32) {
     glViewport(0, 0, WIDTH, HEIGHT)
     Prepare()
 
-    glm_mat4_identity(viewMatrix)    
-    camera.viewMatrix(viewMatrix)
-
-    BatchEntityRender(ground, SIZE, &model, shader, viewMatrix)
+    for(var i = 0; i < MAX_CHUNKS; i+=1) {        
+        chunks[i].draw(shader, texture, viewMatrix)
+    }
+//    BatchEntityRender(ground, SIZE, &model, shader, viewMatrix)
 //    GameDraw();
 //   ConsoleDraw();
 }
@@ -326,7 +289,7 @@ func main(len: i32, args: char**) : i32 {
     var accumulator = 0_i64
     var previousTime : Time = 0_i64
 
-    const maxIterations = 2
+    const maxIterations = 15
     const maxDelta = 250_i64
     const frameRate = 30_i64
     const dt = 1000_i64 / frameRate
@@ -351,13 +314,14 @@ func main(len: i32, args: char**) : i32 {
         glfwPollEvents()
 
         // Keep the game logic running at a fix time step
-        if(deltaTime >= dt) 
+        //if(deltaTime >= dt) 
         {
             currentTime = newTime
             accumulator += deltaTime
             var iteration = 0
 
-            while(accumulator >= dt && iteration < maxIterations) {
+            //while(accumulator >= dt && iteration < maxIterations) 
+            {
                 timeStep.gameClock = gameClock
 
                 Update(&timeStep)

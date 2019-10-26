@@ -21,3 +21,9 @@ public func PrintMatrix(m: mat4) {
         m[3][0],m[3][1],m[3][2],m[3][3]
     )
 }
+
+public func PrintVec3(v: vec3) {    
+    c::printf("%f,%f,%f\n",
+        v[0],v[1],v[2]
+    )
+}
